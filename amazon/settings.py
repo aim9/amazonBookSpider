@@ -63,7 +63,7 @@ NEWSPIDER_MODULE = 'amazon.spiders'
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'amazon.pipelines.AmazonBooksFilePipeline': 300,
-    'amazon.pipelines.AmazonBooksDbPipeline': 200,
+#    'amazon.pipelines.AmazonBooksDbPipeline': 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

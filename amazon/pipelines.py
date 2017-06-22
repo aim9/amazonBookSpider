@@ -83,7 +83,7 @@ class AmazonBooksDbPipeline(object):
         self.db_init()
 
     def db_init(self):
-        self.conn=pymysql.connect(host='input.your.mysql.host',user='your user name',passwd='your password',db='amazon',port=3306,charset='utf8')
+        self.conn=pymysql.connect(host='127.0.0.1',user='root',passwd='wcmysqltnnd',db='amazon',port=3306,charset='utf8')
         self.cur=self.conn.cursor()
         sql='TRUNCATE books_type'
         self.cur.execute(sql)

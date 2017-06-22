@@ -32,10 +32,15 @@ class BooksSpider(scrapy.Spider):
             num=l.xpath('span[2]/text()').extract()
             link=l.xpath('@href[1]').extract()
 
-            item['typeName']=[n.encode('utf-8') for n in name ]
+#            item['typeName']=[n.encode('utf-8') for n in name ]
+            item['typeName']=name[0]
             item['typeNum']=[n.encode('utf-8') for n in num ]
             item['typeLink']=[n.encode('utf-8') for n in link ]
             yield AmazonBooksTypeItem(item)
+#            print item['typeName']
+#            print u"少儿"
+            if(item['typeName']!=u"少儿"):
+                continue
             for i in range(1,75):
                 req=link[0]+'&page='+str(i)
                 yield Request(req,callback=self.booksListParse,dont_filter=True)
@@ -47,17 +52,17 @@ class BooksSpider(scrapy.Spider):
             yield Request(response.url,meta=response.meta,callback=self.booksListParse,dont_filter=True)
         self.pipeline="booksList"
         sel=Selector(response)
-        lists=sel.xpath('.//div[@id="mainResults"]/ul/li/div/div/div/div[2]')
+
+        lists=sel.xpath('//*[@id="mainResults"]/ul/li')
         for l in lists:
             item=AmazonBooksListItem()
-            name=l.xpath('div[2]/a/@title').extract()
-            link=l.xpath('div[2]/a/@href').extract()
-            author=l.xpath('div[2]/div/span[2]/text()').extract()
-            author2=l.xpath('div[2]/div/span[3]/text()').extract()
-            time=l.xpath('div[2]/span[3]/text()').extract()
-            price=l.xpath('div[3]/div[1]/div[2]/a/span/text()').extract()
-            star=l.xpath('div[3]/div[2]/div/span/span/a/i[1]/span/text()').extract()
-
+            name=l.xpath('div/div/div/div[2]/div[1]/div[1]/a/@title').extract()
+            link=l.xpath('div/div/div/div[2]/div[1]/div[1]/a/@href').extract()
+            author=l.xpath('div/div/div/div[2]/div[1]/div[2]/span[2]/text()').extract()
+            author2=l.xpath('div/div/div/div[2]/div[1]/div[2]/span[3]/text()').extract()
+            time=l.xpath('div/div/div/div[2]/div[1]/div[1]/span[3]/text()').extract()
+            price=l.xpath('div/div/div/div[2]/div[2]/div[1]/div[3]/a/span[2]/text()').extract()
+            star=l.xpath('div/div/div/div[2]/div[2]/div[2]/div/span/span/a/i[1]/span/text()').extract()
             item['bookName']=[n.encode('utf-8') for n in name ]
             item['bookAuthor']=[n.encode('utf-8') for n in author ]
             item['bookAuthor2']=[n.encode('utf-8') for n in author2 ]
