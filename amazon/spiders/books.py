@@ -37,8 +37,7 @@ class BooksSpider(scrapy.Spider):
             item['typeNum']=[n.encode('utf-8') for n in num ]
             item['typeLink']=[n.encode('utf-8') for n in link ]
             yield AmazonBooksTypeItem(item)
-#            print item['typeName']
-#            print u"少儿"
+
             if(item['typeName']!=u"少儿"):
                 continue
             for i in range(1,75):
@@ -83,16 +82,18 @@ class BooksSpider(scrapy.Spider):
         bookName=response.meta['bookName']
         sel=Selector(response)
         item=AmazonBookContentItem()
-        content=sel.xpath('.//*[@id="iframeContent"]').extract()
-        if len(content)<1:
-            content=sel.xpath('.//*[@id="bookDescription_feature_div"]/noscript/div').extract()
-        commenturl=sel.xpath('.//div[@id="revSum"]/div[2]/div/div[1]/a/@href').extract()
-        commentnum=sel.xpath('.//div[@id="revF"]/div/a/text()').extract()
+        content=sel.xpath('.//*[@id="postBodyPS"]/div/text()').extract()
+        commenturl=sel.xpath('.//*[@id="revSum"]/div[2]/div/div[1]/a/@href').extract()
+        commentnum=sel.xpath('.//*[@id="summaryStars"]/a/text()').extract()
+        alldigits = ""
+        for k in commentnum:
+            alldigits = alldigits + k 
         print commentnum
         commentNum=''
-        for i in range(len(commentnum[0])):
-            if '0'<=commentnum[0][i]<='9':
-                commentNum+=commentnum[0][i]
+        for i in range(len(alldigits)):
+            if '0'<=alldigits[i]<='9':
+                commentNum = commentNum*10
+                commentNum+=alldigits[i]
         item['bookName']=bookName
         item['bookContent']=[n.encode('utf-8') for n in content ] 
         item['bookCommentUrl']=[n.encode('utf-8') for n in commenturl ] 
