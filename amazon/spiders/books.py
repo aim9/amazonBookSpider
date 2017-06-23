@@ -82,7 +82,9 @@ class BooksSpider(scrapy.Spider):
         bookName=response.meta['bookName']
         sel=Selector(response)
         item=AmazonBookContentItem()
-        content=sel.xpath('.//*[@id="s_contents"]').extract()        
+        content=sel.xpath('.//*[@id="s_contents"]').extract()
+        if(len(content)<1):
+            content = sel.xpath('//*[@id="postBodyPS"]/div/text()').extract()
         commenturl=sel.xpath('.//*[@id="revSum"]/div[2]/div/div[1]/a/@href').extract()
         commentnum=sel.xpath('.//*[@id="summaryStars"]/a/text()').extract()
         alldigits = ""
@@ -118,10 +120,10 @@ class BooksSpider(scrapy.Spider):
         lists=sel.xpath('.//div[@id="cm_cr-review_list"]/div')
         for l in lists:
             item=AmazonBookCommentItem()
-            star=l.xpath('div[1]/a[1]/i/span/text()').extract()
-            title=l.xpath('div[1]/a[2]/text()').extract()
-            time=l.xpath('div[2]/span[4]/text()').extract()
-            content=l.xpath('div[4]/span/text()').extract()
+            star=l.xpath('div/div[1]/a[1]/i/span/text()').extract()
+            title=l.xpath('div/div[1]/a[2]/text()').extract()
+            time=l.xpath('div/div[2]/span[4]/text()').extract()
+            content=l.xpath('div/div[4]/span/text()').extract()
             item['bookName']=response.meta['bookName']
             item['bookCommentStar']=[n.encode('utf-8') for n in star ]
             item['bookCommentTitle']=[n.encode('utf-8') for n in title ] 
